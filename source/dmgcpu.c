@@ -1384,6 +1384,49 @@ void ld_a_a()
 //0x80
 void add_a_b()
 {
-    add(AF.hi, BC.lo);
+    add(&AF.hi, BC.hi);
 }
 
+//0x81
+void add_a_c()
+{
+    add(&AF.hi, BC.lo)
+}
+
+//0x82
+void add_a_d()
+{
+    add(&AF.hi, DE.hi);
+}
+
+//0x83
+void add_a_e()
+{
+    add(&AF.hi, DE.lo);
+}
+
+//0x84
+void add_a_h()
+{
+    add(&AF.hi, HL.hi);
+}
+
+//0x85
+void add_a_l()
+{
+    add(&AF.hi, HL.lo);
+}
+
+//0x86
+void add_a_hlp()
+{
+    add(&AF.hi, gameboy->mmu.read8(HL.word));
+}
+
+//0x87
+void add_a_a()
+{
+    add(&AF.hi, AF.hi);
+}
+
+//0x88
