@@ -13,7 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="E:/Users/Jesse/Documents/Radial Technologies/DMGe/include" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">

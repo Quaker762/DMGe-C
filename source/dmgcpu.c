@@ -38,7 +38,8 @@ static register16_t SP;
 // On a real GameBoy, STOP and HALT act (kinda) differently,
 // but it doesn't matter on a PC because we don't have AA
 // batteries in the back ahahaha!
-static bool         halted = false;
+static bool         halted  = false;
+static bool         ime     = false;
 
 instruction_t instructions[0xFF] =
 {
@@ -316,9 +317,34 @@ void dec(uint8_t* value)
         set_flag(ZERO_FLAG);
 }
 
-void add8(uint8_t* reg, uint8_t value)
+void add(uint8_t* reg, uint8_t value)
 {
     uint16_t result = *reg + value;
+
+    if(result & 0xFF00)
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    *reg += value;
+
+    if(*reg)
+        unset_flag(ZERO_FLAG);
+    else
+        set_flag(ZERO_FLAG);
+
+    if(((*reg & 0x0F) + (value & 0x0F)) > 0x0F)
+        set_flag(HC_FLAG);
+    else
+        unset_flag(HC_FLAG);
+
+    unset_flag(SUB_FLAG);
+}
+
+void adc(uint8_t* reg, uint8_t value)
+{
+    uint16_t result = *reg + value;
+    result += (AF.lo >> 7) ? 1 : 0;
 
     if(result & 0xFF00)
         set_flag(CARRY_FLAG);
@@ -379,8 +405,94 @@ void sub(uint8_t value)
         unset_flag(ZERO_FLAG);
 
     set_flag(SUB_FLAG);
-
 }
+
+void sbc(uint8_t value)
+{
+    if(value > AF.hi)
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    if((value & 0x0F) > (AF.hi & 0x0F))
+        set_flag(HC_FLAG);
+    else
+        unset_flag(HC_FLAG);
+
+    AF.hi -= value;
+    AF.hi -= (AF.lo >> 7) ? 1 : 0;
+
+    if(AF.hi == 0)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+
+    set_flag(SUB_FLAG);
+}
+
+// LOGICAL INSTRUCTIONS!!
+void and(uint8_t value)
+{
+    unset_flag(SUB_FLAG);
+    set_flag(HC_FLAG);
+    unset_flag(CARRY_FLAG);
+
+    AF.hi &= value;
+
+    if(AF.hi == 0)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+}
+
+void xor(uint8_t value)
+{
+    unset_flag(CARRY_FLAG);
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+
+    AF.hi ^= value;
+
+    if(AF.hi == 0)
+        set_flag(ZERO_FLAG);
+    else
+        set_flag(ZERO_FLAG);
+}
+
+void or(uint8_t value)
+{
+    unset_flag(CARRY_FLAG);
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+
+    AF.hi |= value;
+
+    if(AF.hi == 0)
+        set_flag(ZERO_FLAG);
+    else
+        set_flag(ZERO_FLAG);
+}
+
+void cp(uint8_t value)
+{
+    set_flag(SUB_FLAG);
+
+    if(AF.hi == value)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+
+    if(AF.hi < value)
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    if((value & 0x0F) > (AF.hi & 0x0F))
+        set_flag(HC_FLAG);
+    else
+        unset_flag(HC_FLAG);
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 // 0x00
@@ -1385,48 +1497,983 @@ void ld_a_a()
 void add_a_b()
 {
     add(&AF.hi, BC.hi);
+    PC.word++;
 }
 
 //0x81
 void add_a_c()
 {
-    add(&AF.hi, BC.lo)
+    add(&AF.hi, BC.lo);
+    PC.word++;
 }
 
 //0x82
 void add_a_d()
 {
     add(&AF.hi, DE.hi);
+    PC.word++;
 }
 
 //0x83
 void add_a_e()
 {
     add(&AF.hi, DE.lo);
+    PC.word++;
 }
 
 //0x84
 void add_a_h()
 {
     add(&AF.hi, HL.hi);
+    PC.word++;
 }
 
 //0x85
 void add_a_l()
 {
     add(&AF.hi, HL.lo);
+    PC.word++;
 }
 
 //0x86
 void add_a_hlp()
 {
     add(&AF.hi, gameboy->mmu.read8(HL.word));
+    PC.word++;
 }
 
 //0x87
 void add_a_a()
 {
     add(&AF.hi, AF.hi);
+    PC.word++;
 }
 
 //0x88
+void adc_a_b()
+{
+    adc(&AF.hi, BC.hi);
+    PC.word++;
+}
+
+//0x89
+void adc_a_c()
+{
+    adc(&AF.hi, BC.lo);
+    PC.word++;
+}
+
+//0x8A
+void adc_a_d()
+{
+    adc(&AF.hi, DE.hi);
+    PC.word++;
+}
+
+//0x8B
+void adc_a_e()
+{
+    adc(&AF.hi, DE.lo);
+    PC.word++;
+}
+
+//0x8C
+void adc_a_h
+{
+    adc(&AF.hi, HL.hi);
+    PC.word++;
+}
+
+//0x8D
+void adc_a_l()
+{
+    adc(&AF.hi, HL.lo);
+    PC.word++;
+}
+
+//0x8E
+void adc_a_hlp()
+{
+    adc(&AF.hi, gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0x8F
+void adc_a_a()
+{
+    adc(&AF.hi, AF.hi);
+    PC.word++;
+}
+
+//0x90
+void sub_b()
+{
+    sub(BC.hi);
+    PC.word++;
+}
+
+//0x91
+void sub_c()
+{
+    sub(BC.lo);
+    PC.word++;
+}
+
+//0x92
+void sub_d()
+{
+    sub(DE.hi);
+    PC.word++;
+}
+
+//0x93
+void sub_e()
+{
+    sub(DE.lo);
+    PC.word++;
+}
+
+//0x94
+void sub_h()
+{
+    sub(HL.hi);
+    PC.word++;
+}
+
+//0x95
+void sub_l()
+{
+    sub(HL.lo);
+    PC.word++;
+}
+
+//0x96
+void sub_hlp()
+{
+    sub(gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0x97
+void sub_a()
+{
+    sub(AF.hi);
+    PC.word++;
+}
+
+//0x98
+void sbc_a_b()
+{
+    sbc(BC.hi);
+    PC.word++;
+}
+
+//0x99
+void sbc_a_c()
+{
+    sbc(BC.lo);
+    PC.word++;
+}
+
+//0x9A
+void sbc_a_d()
+{
+    sbc(DE.hi);
+    PC.word++;
+}
+
+//0x9B
+void sbc_a_e()
+{
+    sbc(DE.lo);
+    PC.word++;
+}
+
+//0x9C
+void sbc_a_h()
+{
+    sbc(HL.hi);
+    PC.word++;
+}
+
+//0x9D
+void sbc_a_l()
+{
+    sbc(HL.lo);
+    PC.word++;
+}
+
+//0x9E
+void sbc_a_hlp()
+{
+    sbc(gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0x9F
+void sbc_a_a()
+{
+    sbc(AF.hi);
+    PC.word++;
+}
+
+//0xA0
+void and_b()
+{
+    and(BC.hi);
+    PC.word++;
+}
+
+//0xA1
+void and_c()
+{
+    and(BC.lo);
+    PC.word++;
+}
+
+//0xA2
+void and_d()
+{
+    and(DE.hi);
+    PC.word++;
+}
+
+//0xA3
+void and_e()
+{
+    and(DE.lo);
+    PC.word++;
+}
+
+//0xA4
+void and_h()
+{
+    and(HL.hi);
+    PC.word++;
+}
+
+//0xA5
+void and_l()
+{
+    and(HL.lo);
+    PC.word++;
+}
+
+//0xA6
+void and_hlp()
+{
+    and(gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0xA7
+void and_a()
+{
+    and(AF.hi);
+    PC.word++;
+}
+
+//0xA8
+void xor_b()
+{
+    xor(BC.hi);
+    PC.word++;
+}
+
+//0xA9
+void xor_c()
+{
+    xor(BC.lo);
+    PC.word++;
+}
+
+//0xAA
+void xor_d()
+{
+    xor(DE.hi);
+    PC.word++;
+}
+
+//0xAB
+void xor_e()
+{
+    xor(DE.lo);
+    PC.word++;
+}
+
+//0xAC
+void xor_h()
+{
+    xor(HL.hi);
+    PC.word++;
+}
+
+//0xAD
+void xor_l()
+{
+    xor(HL.lo);
+    PC.word++;
+}
+
+//0xAE
+void xor_hlp()
+{
+    xor(gameboy->mmu.read8(HL.word););
+    PC.word++;
+}
+
+//0xAF
+void xor_a()
+{
+    xor(AF.hi);
+    PC.word++;
+}
+
+//0xB0
+void or_b()
+{
+    or(BC.hi);
+    PC.word++;
+}
+
+//0xB1
+void or_c()
+{
+    or(BC.lo);
+    PC.word++;
+}
+
+//0xB2
+void or_d()
+{
+    or(DE.hi);
+    PC.word++;
+}
+
+//0xB3
+void or_e()
+{
+    or(DE.lo);
+    PC.word++;
+}
+
+//0xB4
+void or_h()
+{
+    or(HL.hi);
+    PC.word++;
+}
+
+//0xB5
+void or_l()
+{
+    or(HL.lo);
+    PC.word++;
+}
+
+//0xB6
+void or_hlp()
+{
+    or(gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0xB7
+void or_a()
+{
+    or(AF.hi);
+    PC.word++;
+}
+
+//0xB8
+void cp_b()
+{
+    cp(BC.hi);
+    PC.word++;
+}
+
+//0xB9
+void cp_c()
+{
+    cp(BC.lo);
+    PC.word++;
+}
+
+//0xBA
+void cp_d()
+{
+    cp(DE.hi);
+    PC.word++;
+}
+
+//0xBB
+void cp_e()
+{
+    cp(DE.lo);
+    PC.word++;
+}
+
+//0xBC
+void cp_h()
+{
+    cp(HL.hi);
+    PC.word++;
+}
+
+//0xBD
+void cp_l()
+{
+    cp(HL.lo);
+    PC.word++;
+}
+
+//0xBE
+void cp_hlp()
+{
+    cp(gameboy->mmu.read8(HL.word));
+    PC.word++;
+}
+
+//0xBF
+void cp_a()
+{
+    cp(AF.hi);
+    PC.word++;
+}
+
+//0xC0
+// FIX ME PLEASE!
+void ret_nz()
+{
+    uint8_t flags = AF.lo;
+
+    // Zero flag is NOT set!
+    // Pop the return value off of the stack and jump to it!
+    if((flags & ZERO_FLAG) == 0)
+    {
+        uint16_t addr = gameboy->mmu.read16(SP.word);
+        SP.word += ; // The stack grows downwards so we INCREMENT the stack pointer!
+        PC.word = addr;
+    }
+    else
+    {
+        PC.word++;
+    }
+}
+
+//0xC1
+void pop_bc()
+{
+    BC.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+    PC.word++;
+}
+
+//0xC2
+void jp_nz_a16
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & ZERO_FLAG) == 0)
+    {
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xC3
+void jp_a16()
+{
+    PC.word = gameboy->mmu.read16(PC.word + 1);
+}
+
+//0xC4
+void call_nz_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & ZERO_FLAG) == 0)
+    {
+        SP.word -= 2;
+        gameboy->mmu.write16(SP.word, PC.word);
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xC5
+void push_bc()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, BC.word);
+    PC.word++;
+}
+
+//0xC6
+void add_a_d8
+{
+    add(&AF.hi, PC.word + 1);
+    PC.word += 2;
+}
+
+//0xC7
+void rst_00()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x00;
+}
+
+//0xC8
+void ret_z()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & ZERO_FLAG) == ZERO_FLAG) // Fucked up comparison ahahaha!
+    {
+        PC.word = gameboy->mmu.read16(SP.word);
+        SP.word += 2;
+    }
+    else
+    {
+        PC.word++;
+    }
+}
+
+//0xC9
+void ret()
+{
+    PC.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+}
+
+//0xCA
+void jp_z_a16
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & ZERO_FLAG) == ZERO_FLAG)
+    {
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xCB
+// PREFIX CB! RESERVED INSTRUCTION!
+
+//0xCC
+void call_z_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & ZERO_FLAG) == 0)
+    {
+        SP.word -= 2;
+        gameboy->mmu.write16(SP.word, PC.word);
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xCD
+void call_16()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = gameboy->mmu.read16(PC.word + 1);
+}
+
+//0xCE
+void adc_a_d8()
+{
+    adc(&AF.hi, PC.word + 1);
+    PC.word += 2;
+}
+
+//0xCF
+void rst_08()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x08;
+}
+
+//0xD0
+void ret_nc()
+{
+    uint8_t flags = AF.lo;
+
+    // Zero flag is NOT set!
+    // Pop the return value off of the stack and jump to it!
+    if((flags & CARRY_FLAG) == 0)
+    {
+        uint16_t addr = gameboy->mmu.read16(SP.word);
+        SP.word += ; // The stack grows downwards so we INCREMENT the stack pointer!
+        PC.word = addr;
+    }
+    else
+    {
+        PC.word++;
+    }
+}
+
+//0xD1
+void pop_de()
+{
+    DE.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+    PC.word++;
+}
+
+//0xD2
+void jp_nc_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & CARRY_FLAG) == 0)
+    {
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xD3
+
+//0xD4
+void call_nc_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & CARRY_FLAG) == 0)
+    {
+        SP.word -= 2;
+        gameboy->mmu.write16(SP.word, PC.word);
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xD5
+void push_de()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, DE.word);
+    PC.word++;
+}
+
+//0xD6
+void sub_d8()
+{
+    sub(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xD7
+void rst_10()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x10;
+}
+
+//0xD8
+void ret_c
+{
+    uint8_t flags = AF.lo;
+
+    // Zero flag is NOT set!
+    // Pop the return value off of the stack and jump to it!
+    if((flags & CARRY_FLAG) == CARRY_FLAG)
+    {
+        uint16_t addr = gameboy->mmu.read16(SP.word);
+        SP.word += ; // The stack grows downwards so we INCREMENT the stack pointer!
+        PC.word = addr;
+    }
+    else
+    {
+        PC.word++;
+    }
+}
+
+//0xD9
+void reti()
+{
+    PC.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+    ime = true;
+}
+
+//0xDA
+void jp_c_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & CARRY_FLAG) == CARRY_FLAG)
+    {
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xDB // NOP
+
+//0xDC
+void call_c_a16()
+{
+    uint8_t flags = AF.lo;
+
+    if((flags & CARRY_FLAG) == CARRY_FLAG)
+    {
+        SP.word -= 2;
+        gameboy->mmu.write16(SP.word, PC.word);
+        PC.word = gameboy->mmu.read16(PC.word + 1);
+    }
+    else
+    {
+        PC.word += 3;
+    }
+}
+
+//0xDD // NOP
+
+//0xDE
+void sbc_a_d8()
+{
+    sbc(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xDF
+void rst_18()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x18;
+}
+
+//0xE0
+void ldh_a8p_a()
+{
+    gameboy->mmu.write8(0xFF00 + PC.word + 1, AF.hi);
+    PC.word += 2;
+}
+
+//0xE1
+void pop_hl()
+{
+    HL.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+    PC.word++;
+}
+
+//0xE2
+void ld_cp_a()
+{
+
+}
+
+//0xE5
+void push_hl()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, HL.word);
+    PC.word++;
+}
+
+//0xE6
+void and_d8()
+{
+    and(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xE7
+void rst_20()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x20;
+}
+
+//0xE8
+void add_sp_r8()
+{
+    SP.word += (signed)(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xE9
+void jp_hlp()
+{
+    PC.word = gameboy->mmu.read16(HL.word);
+}
+
+//0xEA, CHALLENGE EVERYTHING
+void ld_a16_a()
+{
+    gameboy->mmu.write8(PC.word + 1, AF.hi);
+    PC.word += 3;
+}
+
+//0xEE
+void xor_d8()
+{
+    xor(PC.word + 1);
+    PC.word++;
+}
+
+//0xEF
+void rst_28()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x28;
+}
+
+//0xF0
+void ldh_a_a8p
+{
+    AF.hi = gameboy->mmu.read8(0xFF00 + (signed)(PC.word + 1));
+    PC.word += 2;
+}
+
+//0xF1
+void pop_af()
+{
+    AF.word = gameboy->mmu.read16(SP.word);
+    SP.word += 2;
+    PC.word++;
+}
+
+//0xF2
+void ld_a_cp()
+{
+    AF.hi = gameboy->mmu.read8(0xFF00 + BC.lo);
+    PC.word++;
+}
+
+//0xF3
+void di()
+{
+    ime = false;
+}
+
+//0xF5
+void push_af()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, AF.word);
+    PC.word++;
+}
+
+//0xF6
+void or_d8()
+{
+    or(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xF7
+void rst_30()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x30;
+}
+
+//0xF8
+void ld_hl_spr8() // Hahaha what the fuck!
+{
+
+}
+
+//0xF9
+void ld_sp_hl()
+{
+    SP.word = HL.word;
+    PC.word++;
+}
+
+//0xFA
+void ld_a_a16p
+{
+    AF.hi = gameboy->mmu.read8(PC.word + 1);
+    PC.word += 3;
+}
+
+//0xFB
+void ei()
+{
+    ime = true;
+}
+
+//0xFE
+void cp_d8()
+{
+    cp(PC.word + 1);
+    PC.word += 2;
+}
+
+//0xFF
+void rst_38()
+{
+    SP.word -= 2;
+    gameboy->mmu.write16(SP.word, PC.word);
+    PC.word = 0x0000 + 0x38;
+}
+
+////////////////////////CB OPERATIONS////////////////////////
+
+// HELPER FUNCTIONS
+void rlc(uint8_t* reg)
+{
+    uint8_t carry = (AF.lo >> 7) ? 1 : 0;
+    uint8_t msb =
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+
+    if(*reg & 0x80) // Bit 7 is set
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    *reg <<= 1;
+    *reg | carry;
+}
+
+
+
+
+
+
+
+//CB 00
+void rlc_b()
+{
+
+    PC.word += 2;
+}
+
+

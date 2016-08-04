@@ -37,3 +37,12 @@
 	<dmgcpu.h>
 	<mmu.h>
 
+1468899698 source:c:\users\jesse\documents\github\dmge-c\source\cart.c
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<mmu.h>
+
+1468899698 c:\users\jesse\documents\github\dmge-c\include\mmu.h
+	<stdint.h>
+
