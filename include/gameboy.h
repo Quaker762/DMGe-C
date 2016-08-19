@@ -20,11 +20,13 @@ Revision History:
 
 #include <dmgcpu.h>
 #include <mmu.h>
+#include <gpu.h>
 
 typedef struct
 {
     cpu_t cpu;
     mmu_t mmu;
+    gpu_t gpu;
 } gameboy_t;
 
 

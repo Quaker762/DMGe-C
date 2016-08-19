@@ -36,6 +36,7 @@
 		<Unit filename="include/dmg_ops.h" />
 		<Unit filename="include/dmgcpu.h" />
 		<Unit filename="include/gameboy.h" />
+		<Unit filename="include/gpu.h" />
 		<Unit filename="include/mmu.h" />
 		<Unit filename="source/cart.c">
 			<Option compilerVar="CC" />
@@ -44,6 +45,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="source/dmge.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="source/gpu.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="source/mmu.c">

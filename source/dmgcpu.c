@@ -344,7 +344,7 @@ void add(uint8_t* reg, uint8_t value)
 void adc(uint8_t* reg, uint8_t value)
 {
     uint16_t result = *reg + value;
-    result += (AF.lo >> 7) ? 1 : 0;
+    result |= (AF.lo >> 4) & 0x01;
 
     if(result & 0xFF00)
         set_flag(CARRY_FLAG);
@@ -420,7 +420,7 @@ void sbc(uint8_t value)
         unset_flag(HC_FLAG);
 
     AF.hi -= value;
-    AF.hi -= (AF.lo >> 7) ? 1 : 0;
+    AF.hi -= (AF.lo >> 7) & 0x01;
 
     if(AF.hi == 0)
         set_flag(ZERO_FLAG);
@@ -493,6 +493,102 @@ void cp(uint8_t value)
         unset_flag(HC_FLAG);
 }
 
+// HELPER FUNCTIONS
+
+// RLC, bit 7 goes to Carry Flag and bit0
+// Shift left by one
+void rlc(uint8_t* reg)
+{
+    uint8_t carry = (*reg & 0x80) >> 7;
+
+    if(carry)
+        set_flag(CARRY_FLAG);
+    else
+        set_flag(CARRY_FLAG);
+
+    *reg <<= 1;
+    *reg |= carry;
+
+    if(*reg == 0)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+}
+
+// RRC, same as above, but to the right this time!
+void rrc()
+{
+    uint8_t carry = *reg & 0x01;
+
+    if(carry)
+        set_flag(CARRY_FLAG);
+    else
+        set_flag(CARRY_FLAG);
+
+    *reg >>= 1;
+    *reg |= (carry << 7);
+
+    if(*reg == 0)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+}
+
+// RL, Bit 7 to Carry flag, carry flag to bit 0
+void rl(uint8_t* reg)
+{
+    uint8_t carry = (AF.lo >> 4) & 0x01;
+    uint8_t bit7 = *reg & 0x80;
+
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+
+
+    if(bit7)
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    *reg <<= 1;
+    *reg |= carry;
+
+
+// RL, Bit 7 to Carry flag, carry flag to bit 0
+void rr(uint8_t* reg)
+{
+    uint8_t carry = (AF.lo >> 4) & 0x01;
+    uint8_t bit1 = *reg & 0x01;
+
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+
+    if(bit1)
+        set_flag(CARRY_FLAG);
+    else
+        unset_flag(CARRY_FLAG);
+
+    *reg >>= 1;
+    *reg |= (carry << 7);
+}
+
+void swap(uint8_t* reg)
+{
+    uint8_t tmp;
+
+    unset_flag(SUB_FLAG);
+    unset_flag(HC_FLAG);
+    unset_flag(CARRY_FLAG);
+
+    tmp = *reg & 0x0F;
+    *reg >>= 4;
+    *reg &= (tmp << 4);
+
+    if(*reg == 0)
+        set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 // 0x00
@@ -546,9 +642,9 @@ void ld_b_d8()
 //0x07
 void rlca()
 {
-    uint8_t carry = AF.hi >> 7;
+    uint8_t carry = (AF.hi & 0x80) >> 7;
 
-    if(carry != 0)
+    if(carry)
         set_flag(CARRY_FLAG);
     else
         unset_flag(CARRY_FLAG);
@@ -2446,34 +2542,226 @@ void rst_38()
 
 ////////////////////////CB OPERATIONS////////////////////////
 
-// HELPER FUNCTIONS
-void rlc(uint8_t* reg)
-{
-    uint8_t carry = (AF.lo >> 7) ? 1 : 0;
-    uint8_t msb =
-    unset_flag(SUB_FLAG);
-    unset_flag(HC_FLAG);
-
-    if(*reg & 0x80) // Bit 7 is set
-        set_flag(CARRY_FLAG);
-    else
-        unset_flag(CARRY_FLAG);
-
-    *reg <<= 1;
-    *reg | carry;
-}
-
-
-
-
-
-
-
 //CB 00
 void rlc_b()
 {
-
+    rlc(BC.hi);
     PC.word += 2;
 }
 
+//CB 01
+void rlc_c()
+{
+    rlc(BC.lo);
+    PC.word += 2;
+}
 
+//CB 02
+void rlc_d()
+{
+    rlc(DE.hi);
+    PC.word += 2;
+}
+
+//CB 03
+void rlc_e()
+{
+    rlc(DE.lo);
+    PC.word += 2;
+}
+
+//CB 04
+void rlc_h()
+{
+    rlc(HL.hi);
+    PC.word += 2;
+}
+
+//CB 05
+void rlc_l()
+{
+    rlc(HL.lo);
+    PC.word += 2;
+}
+
+//CB 06
+void rlc_hlp()
+{
+    rlc(gameboy->mmu.read8(HL.word));
+    PC.word += 2;
+}
+
+//CB 07
+void rlc_a()
+{
+    rlc(AF.hi);
+    PC.word += 2;
+}
+
+//CB 08
+void rrc_b()
+{
+    rrc(BC.hi);
+    PC.word += 2;
+}
+
+//CB 09
+void rrc_c()
+{
+    rrc(BC.lo);
+    PC.word += 2;
+}
+
+//CB 0A
+void rrc_d()
+{
+    rrc(DE.hi);
+    PC.word += 2;
+}
+
+//CB 0B
+void rrc_e()
+{
+    rrc(DE.lo);
+    PC.word += 2;
+}
+
+//CB 0C
+void rrc_h()
+{
+    rrc(HL.hi);
+    PC.word += 2;
+}
+
+//CB 0D
+void rrc_l()
+{
+    rrc(HL.lo);
+    PC.word += 2;
+}
+
+//CB 0E
+void rrc_hlp()
+{
+    rrc(gameboy->mmu.read8(HL.word));
+    PC.word += 2;
+}
+
+//CB 0F
+void rrc_a()
+{
+    rrc(AF.hi);
+    PC.word += 2;
+}
+
+//CB 10
+void rl_b()
+{
+    rl(BC.hi);
+    PC.word += 2;
+}
+
+//CB 11
+void rl_c()
+{
+    rl(BC.lo);
+    PC.word += 2;
+}
+
+//CB 12
+void rl_d()
+{
+    rl(DE.hi);
+    PC.word++;
+}
+
+//CB 13
+void rl_e()
+{
+    rl(DE.lo);
+    PC.word += 2;
+}
+
+//CB 14
+void rl_h()
+{
+    rl(HL.hi);
+    PC.word += 2;
+}
+
+//CB 15
+void rl_l()
+{
+    rl(HL.lo);
+    PC.word += 2;
+}
+
+//CB 16
+void rl_hlp()
+{
+    rl(gameboy->mmu.read8(HL.word));
+    PC.word += 2;
+}
+
+//CB 17
+void rl_a()
+{
+    rl(AF.hi);
+    PC.word += 2;
+}
+
+//CB 18
+void rr_b()
+{
+    rr(BC.hi);
+    PC.word += 2;
+}
+
+//CB 19
+void rr_c()
+{
+    rr(BC.lo);
+    PC.word += 2;
+}
+
+//CB 1A
+void rr_d()
+{
+    rr(DE.hi);
+    PC.word += 2;
+}
+
+//CB 1B
+void rr_e()
+{
+    rr(DE.lo);
+    PC.word += 2;
+}
+
+//CB 1C
+void rr_h()
+{
+    rr(HL.hi);
+    PC.word += 2;
+}
+
+//CB 1D
+void rr_l()
+{
+    rr(HL.lo);
+    PC.word += 2;
+}
+
+//CB 1E
+void rr_hlp()
+{
+    rr(gameboy->mmu.read8(HL.word));
+    PC.word += 2;
+}
+
+//CB 1F
+void rr_a()
+{
+    rr(AF.hi);
+    PC.word += 2;
+}
