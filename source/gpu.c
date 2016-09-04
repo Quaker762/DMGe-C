@@ -111,6 +111,38 @@ void gpu_cycle(uint32_t clock)
     }
 }
 
+void write_reg(uint16_t address, uint8_t value)
+{
+    printf("gpu: attempting write to register 0x%04x with value 0x%02x...\n", address, value);
+
+    switch(address)
+    {
+        case 0xFF40: //LCDC
+        break;
+
+        case 0xFF41: //STAT
+        break;
+
+        case 0xFF42: //SCY
+            gameboy->gpu.scy = value;
+        break;
+    }
+}
+
+void read_reg(uint16_t address)
+{
+    printf("gpu: attempting read of register 0x%04x...\n", address);
+
+    switch(address)
+    {
+        case 0xFF42:
+            return gameboy->gpu.scy;
+
+        case 0xFF44:
+            return gameboy->gpu.line;
+    }
+}
+
 void render_scanline()
 {
 
@@ -121,7 +153,9 @@ void gpu_init(void* gb)
     gameboy = (gameboy_t*)gb;
     //gameboy->gpu.vram_read = &vram_read;
 
-    gameboy->gpu.render_scanline = &render_scanline;
+    gameboy->gpu.render_scanline    = &render_scanline;
+    gameboy->gpu.write_reg          = &write_reg;
+    gameboy->gpu.read_reg           = &read_reg;
 
     printf("GPU Initialised Successfully!\n");
 }

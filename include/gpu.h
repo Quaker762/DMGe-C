@@ -54,6 +54,8 @@ typedef struct
     void    (*vram_write)(uint16_t addr, uint8_t value);
     uint8_t (*vram_read)(uint16_t addr);
     void    (*render_scanline)();
+    void    (*write_reg)(uint16_t address, uint8_t value);
+    uint8_t (*read_reg)(uint16_t address);
 
     uint32_t    stateclock;
     uint8_t     state;

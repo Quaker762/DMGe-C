@@ -32,6 +32,9 @@ gameboy_t*  gameboy;
 // VERY RUDIMENTARY!!
 static uint8_t read8(uint16_t address)
 {
+    if(address >= 0xFF40 && address <= 0xFF4B)
+        return gameboy->gpu.read_reg(address);
+
     return ram[address];
 }
 
@@ -43,6 +46,9 @@ static uint16_t read16(uint16_t address)
 
 static void write8(uint16_t address, uint8_t data)
 {
+    if(address >= 0xFF40 && address <= 0xFF4B)
+        gameboy->gpu.write_reg(address, data);
+
     ram[address] = data;
 }
 

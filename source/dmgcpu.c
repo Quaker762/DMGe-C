@@ -2406,7 +2406,7 @@ void rst_28()
 //0xF0
 void ldh_a_a8p()
 {
-    AF.hi = gameboy->mmu.read8(0xFF00 + (signed)(PC.word + 1));
+    AF.hi = gameboy->mmu.read8(0xFF00 + gameboy->mmu.read8(PC.word + 1));
     PC.word += 2;
 }
 
@@ -4923,7 +4923,7 @@ void cpu_init(void* gb)
     PC.word = 0x0000;
 
     #ifdef DEBUG_ENABLE
-        //trace = fopen("trace.txt", "w");
+        trace = fopen("trace.txt", "w");
     #endif
     printf("CPU Initialised Successfully!\n");
 }
@@ -4939,12 +4939,22 @@ void cpu_cycle()
     {
         case 0xCB:
             instruction = gameboy->mmu.read8(PC.word + 1);
+
+            fprintf(trace, "%-20s", instructionscb[instruction].name);
+            fprintf(trace, "instruction:0x%02x ", instruction);
+            fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x PC:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, PC.word, SP.word);
+
             ((void (*)(void))instructionscb[instruction].operation)();
             gameboy->cpu.clock.t += instructionscb[instruction].t_cycles;
             gameboy->cpu.clock.m += instructionscb[instruction].m_cycles;
             break;
         default:
+            fprintf(trace, "%-20s", instructions[instruction].name);
+            fprintf(trace, "instruction:0x%02x ", instruction);
+            fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x PC:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, PC.word, SP.word);
+
             ((void (*)(void))instructions[instruction].operation)();
+
             gameboy->cpu.clock.t += instructions[instruction].t_cycles;
             gameboy->cpu.clock.m += instructions[instruction].m_cycles;
             break;

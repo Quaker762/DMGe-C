@@ -140,3 +140,54 @@
 	<mmu.h>
 	<gameboy.h>
 
+1472996838 source:e:\users\jesse\documents\mosaic software\dmge-c\source\cart.c
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<mmu.h>
+
+1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\mmu.h
+	<stdint.h>
+	<stdbool.h>
+
+1472996838 source:e:\users\jesse\documents\mosaic software\dmge-c\source\dmge.c
+	<stdlib.h>
+	<gameboy.h>
+	<dmgcpu.h>
+	<mmu.h>
+	<cart.h>
+	<gpu.h>
+
+1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\gameboy.h
+	<dmgcpu.h>
+	<mmu.h>
+	<gpu.h>
+
+1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\dmgcpu.h
+	<stdint.h>
+	<stdbool.h>
+
+1472998108 e:\users\jesse\documents\mosaic software\dmge-c\include\gpu.h
+
+1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\cart.h
+
+1472998868 source:e:\users\jesse\documents\mosaic software\dmge-c\source\mmu.c
+	<stdio.h>
+	<string.h>
+	<mmu.h>
+	<gameboy.h>
+
+1472999361 source:e:\users\jesse\documents\mosaic software\dmge-c\source\dmgcpu.c
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+	<dmgcpu.h>
+	<gameboy.h>
+
+1472999551 source:e:\users\jesse\documents\mosaic software\dmge-c\source\gpu.c
+	<stdio.h>
+	<string.h>
+	<gameboy.h>
+	<mmu.h>
+	<gpu.h>
+
