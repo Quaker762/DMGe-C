@@ -1,12 +1,15 @@
 /*++
 
-Copyright (c) 2016  Radial Technologies
+Copyright (c) 2016  Mosaic Software
 
-Module Name:
+Module Name
+        cart.h
 
 Abstract:
+        Defines a logical GameBoy Game Cart and related functions.
 
 Author:
+        jbuhagiar [Quaker762]
 
 Environment:
 
@@ -18,7 +21,7 @@ Revision History:
 #ifndef CART_H_INCLUDED
 #define CART_H_INCLUDED
 
-int load_rom(const char* fname);
+//int load_rom(const char* fname);
 
 
 

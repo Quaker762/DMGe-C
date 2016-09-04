@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2016  Radial Technologies
+Copyright (c) 2016  Mosaic Software
 
 Module Name:
         gpu.h
@@ -46,7 +46,6 @@ Revision History:
 #define STATE_VRAM_READ 3
 #define STATE_HBLANK 0
 #define STATE_VBLANK 1
-
 typedef struct
 {
     void    (*vram_write)(uint16_t addr, uint8_t value);
@@ -64,6 +63,7 @@ typedef struct
     uint8_t     palette[4];
 } gpu_t;
 
-void gpu_init();
+void gpu_init(void* gb);
+void gp_cycle(void);
 
 #endif // GPU_H_INCLUDED

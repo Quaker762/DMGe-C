@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2016  Radial Technologies
+Copyright (c) 2016  Mosaic Software
 
 Module Name:
 
@@ -15,20 +15,31 @@ Notes:
 Revision History:
 
 --*/
+#include <stdlib.h>
 #include <gameboy.h>
 #include <dmgcpu.h>
 #include <mmu.h>
+#include <cart.h>
+#include <gpu.h>
 
-gameboy_t gb;
+gameboy_t* gb;
 
 int main()
 {
-    cpu_init(&gb);
-    mmu_init(&gb);
+    gb = (gameboy_t*)malloc(sizeof(gameboy_t));
 
-    gb.cpu.running = true;
-    load_rom("../roms/bios.bin");
-    cycle();
+    cpu_init(gb);
+    mmu_init(gb);
+    gpu_init(gb);
 
+    gb->cpu.running = true;
+    load_rom("roms/tetris.gb");
+
+    while(gb->cpu.running)
+    {
+        cpu_cycle();
+    }
+
+    free(&gb);
     return 0;
 }

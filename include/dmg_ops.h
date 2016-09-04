@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2016  Radial Technologies
+Copyright (c) 2016  Mosaic Software
 
 Module Name:
         dmgcpu.h
@@ -9,7 +9,7 @@ Abstract:
         Interface for CPU related functions
 
 Author:
-        Quaker762
+        jbuhagiar [Quaker762]
 
 Environment:
 
