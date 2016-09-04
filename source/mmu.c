@@ -88,16 +88,52 @@ void load_rom(const char* romname)
     fclose(from);
 }
 
+void set_ime_bit(uint8_t bit)
+{
+    uint8_t ime_curr = gameboy->mmu.read8(0xFFFF);
+
+    ime_curr |= bit;
+    gameboy->mmu.write8(0xFFFF, ime_curr);
+}
+
+void unset_ime_bit(uint8_t bit)
+{
+    uint8_t ime_curr = gameboy->mmu.read8(0xFF0F);
+
+    ime_curr &= ~bit;
+    gameboy->mmu.write8(0xFF0F, ime_curr);
+}
+
+void set_int_bit(uint8_t bit)
+{
+    uint8_t ime_curr = gameboy->mmu.read8(0xFF0F);
+
+    ime_curr |= bit;
+    gameboy->mmu.write8(0xFF0F, ime_curr);
+}
+
+void unset_int_bit(uint8_t bit)
+{
+    uint8_t ime_curr = gameboy->mmu.read8(0xFFFF);
+
+    ime_curr &= ~bit;
+    gameboy->mmu.write8(0xFFFF, ime_curr);
+}
+
 void mmu_init(void* gb)
 {
     gameboy = (gameboy_t*)gb;
 
     memset(ram, 0x00, RAM_SIZE); // Zero out the contents of RAM
-    gameboy->mmu.read8   = &read8;
-    gameboy->mmu.read16  = &read16;
-    gameboy->mmu.write8  = &write8;
-    gameboy->mmu.write16 = &write16;
-    gameboy->mmu.map_rom = &map_rom;
+    gameboy->mmu.read8          = &read8;
+    gameboy->mmu.read16         = &read16;
+    gameboy->mmu.write8         = &write8;
+    gameboy->mmu.write16        = &write16;
+    gameboy->mmu.map_rom        = &map_rom;
+    gameboy->mmu.set_int_bit    = &set_int_bit;
+    gameboy->mmu.unset_int_bit  = &unset_int_bit;
+    gameboy->mmu.set_ime_bit    = &set_ime_bit;
+    gameboy->mmu.unset_ime_bit  = &unset_ime_bit;
 
     load_bios();
     gameboy->mmu.biosmapped = true;

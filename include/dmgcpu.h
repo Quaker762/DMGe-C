@@ -58,8 +58,8 @@ typedef struct
 
 typedef struct
 {
-    bool    running;
-    clock_t clock;
+    bool        running;
+    clock_t     clock;
 } cpu_t;
 
 typedef struct

@@ -42,10 +42,13 @@ Revision History:
 #ifndef GPU_H_INCLUDED
 #define GPU_H_INCLUDED
 
-#define STATE_OAM_READ 2
-#define STATE_VRAM_READ 3
-#define STATE_HBLANK 0
-#define STATE_VBLANK 1
+#define STATE_HBLANK        0
+#define STATE_VBLANK        1
+#define STATE_OAM_READ      2
+#define STATE_VRAM_READ     3
+
+#define VRAM_BASE           0x8000
+#define VRAM_END            0xA000
 typedef struct
 {
     void    (*vram_write)(uint16_t addr, uint8_t value);
@@ -53,6 +56,7 @@ typedef struct
     void    (*render_scanline)();
 
     uint32_t    stateclock;
+    uint8_t     state;
     uint8_t     line;
     uint8_t     tileset[384][8][8];
     uint8_t     scx;
@@ -64,6 +68,6 @@ typedef struct
 } gpu_t;
 
 void gpu_init(void* gb);
-void gp_cycle(void);
+void gpu_cycle(uint32_t clock);
 
 #endif // GPU_H_INCLUDED
