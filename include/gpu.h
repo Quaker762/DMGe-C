@@ -51,10 +51,10 @@ Revision History:
 #define VRAM_END            0xA000
 typedef struct
 {
-    void    (*vram_write)(uint16_t addr, uint8_t value);
+    void    (*vram_write)(uint16_t addr, uint8_t data);
     uint8_t (*vram_read)(uint16_t addr);
     void    (*render_scanline)();
-    void    (*write_reg)(uint16_t address, uint8_t value);
+    void    (*write_reg)(uint16_t address, uint8_t data);
     uint8_t (*read_reg)(uint16_t address);
 
     uint32_t    stateclock;

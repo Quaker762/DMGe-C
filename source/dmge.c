@@ -22,6 +22,7 @@ Revision History:
 #include <mmu.h>
 #include <cart.h>
 #include <gpu.h>
+#include <apu.h>
 
 gameboy_t* gb;
 
@@ -34,10 +35,12 @@ int main()
     cpu_init(gb);
     mmu_init(gb);
     gpu_init(gb);
+    apu_init(gb);
 
     load_rom("roms/tetris.gb");
 
     gb->cpu.running = true;
+    gb->mmu.biosmapped = true;
 
     while(gb->cpu.running)
     {

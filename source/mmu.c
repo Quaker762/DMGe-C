@@ -15,23 +15,32 @@ Environment:
 
 Notes:
 
+    TODO: Separate the BIOS and RAM into different arrays so we don't have to worry about remapping the lower 256 bytes of the ROM (the interrupt handlers)
+
 Revision History:
 
 --*/
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
 #include <mmu.h>
 #include <gameboy.h>
+#include <cart.h>
 
 #define RAM_SIZE 0xFFFF
 
 uint8_t     ram[0xFFFF]; //64-KiB RAM
 uint8_t     rom[0x8000]; // ROM including all possible banks.
 gameboy_t*  gameboy;
+cart_t*     cart;
 
 // VERY RUDIMENTARY!!
 static uint8_t read8(uint16_t address)
 {
+    if(address >= 0xFF10 && address <= 0xFF3F)
+        return gameboy->apu.read_reg(address);
+
     if(address >= 0xFF40 && address <= 0xFF4B)
         return gameboy->gpu.read_reg(address);
 
@@ -46,6 +55,9 @@ static uint16_t read16(uint16_t address)
 
 static void write8(uint16_t address, uint8_t data)
 {
+    if(address >= 0xFF10 && address <= 0xFF3F)
+        gameboy->apu.write_reg(address, data);
+
     if(address >= 0xFF40 && address <= 0xFF4B)
         gameboy->gpu.write_reg(address, data);
 
@@ -86,6 +98,7 @@ void load_rom(const char* romname)
     {
         fread(rom, 0x8000, sizeof(uint8_t), from);
         memcpy(ram + 0x100, rom + 0x100, 0x8000 - 0x100);
+        memcpy(cart, ram + 0x134, sizeof(cart_t));
     }
     else
     {
@@ -129,8 +142,10 @@ void unset_int_bit(uint8_t bit)
 void mmu_init(void* gb)
 {
     gameboy = (gameboy_t*)gb;
+    cart = (cart_t*)malloc(sizeof(cart_t));
 
     memset(ram, 0x00, RAM_SIZE); // Zero out the contents of RAM
+    memset(cart, 0x00, sizeof(cart_t));
     gameboy->mmu.read8          = &read8;
     gameboy->mmu.read16         = &read16;
     gameboy->mmu.write8         = &write8;
@@ -146,4 +161,3 @@ void mmu_init(void* gb)
 
     printf("MMU Initialised Succesfuly!\n");
 }
-

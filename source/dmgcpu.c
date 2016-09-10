@@ -602,7 +602,8 @@ void de_inc()
     PC.word++;
 }
 
-//0x14void d_inc()
+//0x14
+void d_inc()
 {
     inc(&DE.hi);
     PC.word++;
@@ -2406,7 +2407,8 @@ void rst_28()
 //0xF0
 void ldh_a_a8p()
 {
-    AF.hi = gameboy->mmu.read8(0xFF00 + gameboy->mmu.read8(PC.word + 1));
+    uint8_t address = gameboy->mmu.read8(PC.word + 1);
+    AF.hi = gameboy->mmu.read8(0xFF00 + address);
     PC.word += 2;
 }
 
@@ -2429,6 +2431,7 @@ void ld_a_cp()
 void di()
 {
     ime = false;
+    PC.word++;
 }
 
 //0xF5
@@ -2478,12 +2481,14 @@ void ld_a_a16p()
 void ei()
 {
     ime = true;
+    PC.word++;
 }
 
 //0xFE
 void cp_d8()
 {
-    cp(PC.word + 1);
+    uint8_t d8 = gameboy->mmu.read8(PC.word + 1);
+    cp(d8);
     PC.word += 2;
 }
 
@@ -4922,6 +4927,9 @@ void cpu_init(void* gb)
     SP.word = 0x0000;
     PC.word = 0x0000;
 
+    gameboy->cpu.clock.m = 0; // Make sure the clock struct isn't filled with crap
+    gameboy->cpu.clock.t = 0;
+
     #ifdef DEBUG_ENABLE
         trace = fopen("trace.txt", "w");
     #endif
@@ -4945,6 +4953,7 @@ void cpu_cycle()
             fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x PC:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, PC.word, SP.word);
 
             ((void (*)(void))instructionscb[instruction].operation)();
+
             gameboy->cpu.clock.t += instructionscb[instruction].t_cycles;
             gameboy->cpu.clock.m += instructionscb[instruction].m_cycles;
             break;

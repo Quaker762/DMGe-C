@@ -82,3 +82,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 *.gb
+*.cbp
+DMGe.depend
+*.cbp
+trace.txt
