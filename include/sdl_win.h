@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2016  Mosaic Software
+Copyright (c) 2016  Mosaic Software & Darren Anderson
 
 Module Name:
         sdl_win.h

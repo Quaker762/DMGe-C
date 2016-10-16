@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2016  Mosaic Software
+Copyright (c) 2016  Mosaic Software & Darren Anderson
 
 Module Name:
         gpu.c
