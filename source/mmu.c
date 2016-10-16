@@ -32,8 +32,12 @@ Revision History:
 
 uint8_t     ram[0xFFFF]; //64-KiB RAM
 uint8_t     rom[0x8000]; // ROM including all possible banks.
+uint8_t     bios[0xFF];
+
 gameboy_t*  gameboy;
 cart_t*     cart;
+
+const char* interrupts = {"VBLANK", "LCD_STAT", "TIMER", "SERIAL", "JOYPAD"};
 
 // VERY RUDIMENTARY!!
 static uint8_t read8(uint16_t address)
@@ -61,6 +65,9 @@ static void write8(uint16_t address, uint8_t data)
     if(address >= 0xFF40 && address <= 0xFF4B)
         gameboy->gpu.write_reg(address, data);
 
+    if(address >= 0x8000 && address <= 0x9FFF)
+        update_tile(address, data);
+
     ram[address] = data;
 }
 
@@ -77,15 +84,12 @@ static void map_rom()
 
 static int load_bios()
 {
-    char    bios[256];
     FILE*   rom;
 
     rom = fopen("roms/bios.bin", "rb");
     memset(bios, 0x00, 256);
-    fread(bios, 256, sizeof(uint8_t), rom);
+    fread(bios, 0xFF, sizeof(uint8_t), rom);
     fclose(rom);
-
-    memcpy(ram, bios, 256);
 
     return 0;
 }
@@ -97,7 +101,8 @@ void load_rom(const char* romname)
     if((from = fopen(romname, "rb")) != 0)
     {
         fread(rom, 0x8000, sizeof(uint8_t), from);
-        memcpy(ram + 0x100, rom + 0x100, 0x8000 - 0x100);
+        memcpy(ram, rom, 0x8000);
+        memcpy(ram, bios, 0xFF);
         memcpy(cart, ram + 0x134, sizeof(cart_t));
     }
     else

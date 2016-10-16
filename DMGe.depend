@@ -43,50 +43,54 @@
 	<stdlib.h>
 	<mmu.h>
 
-1472983337 c:\users\jesse\documents\github\dmge-c\include\mmu.h
+1473121660 c:\users\jesse\documents\github\dmge-c\include\mmu.h
 	<stdint.h>
 	<stdbool.h>
 
-1472984335 source:c:\users\jesse\documents\github\dmge-c\source\dmgcpu.c
+1473524035 source:c:\users\jesse\documents\github\dmge-c\source\dmgcpu.c
 	<stdio.h>
 	<string.h>
 	<stdbool.h>
 	<dmgcpu.h>
 	<gameboy.h>
 
-1472984340 c:\users\jesse\documents\github\dmge-c\include\dmgcpu.h
+1472985261 c:\users\jesse\documents\github\dmge-c\include\dmgcpu.h
 	<stdint.h>
 	<stdbool.h>
 
-1472620341 c:\users\jesse\documents\github\dmge-c\include\gameboy.h
+1473522862 c:\users\jesse\documents\github\dmge-c\include\gameboy.h
 	<dmgcpu.h>
 	<mmu.h>
 	<gpu.h>
+	<apu.h>
 
-1472984378 c:\users\jesse\documents\github\dmge-c\include\gpu.h
+1473158621 c:\users\jesse\documents\github\dmge-c\include\gpu.h
 
-1472984613 source:c:\users\jesse\documents\github\dmge-c\source\dmge.c
+1473523077 source:c:\users\jesse\documents\github\dmge-c\source\dmge.c
 	<stdlib.h>
 	<gameboy.h>
 	<dmgcpu.h>
 	<mmu.h>
 	<cart.h>
 	<gpu.h>
+	<apu.h>
 
-1472984677 source:c:\users\jesse\documents\github\dmge-c\source\gpu.c
+1473523175 source:c:\users\jesse\documents\github\dmge-c\source\gpu.c
 	<stdio.h>
 	<string.h>
 	<gameboy.h>
 	<mmu.h>
 	<gpu.h>
 
-1472984763 source:c:\users\jesse\documents\github\dmge-c\source\mmu.c
+1473523598 source:c:\users\jesse\documents\github\dmge-c\source\mmu.c
 	<stdio.h>
 	<string.h>
+	<stdlib.h>
 	<mmu.h>
 	<gameboy.h>
+	<cart.h>
 
-1472646633 c:\users\jesse\documents\github\dmge-c\include\cart.h
+1473295589 c:\users\jesse\documents\github\dmge-c\include\cart.h
 
 1472646643 source:e:\users\jesse\documents\radial technologies\dmge-c\source\cart.c
 	<stdint.h>
@@ -140,54 +144,424 @@
 	<mmu.h>
 	<gameboy.h>
 
-1472996838 source:e:\users\jesse\documents\mosaic software\dmge-c\source\cart.c
+1473523142 c:\users\jesse\documents\github\dmge-c\include\apu.h
+	<stdint.h>
+
+1473523224 source:c:\users\jesse\documents\github\dmge-c\source\apu.c
+	<apu.h>
+	<gameboy.h>
+
+1472650243 source:c:\users\jesse\documents\mosaic software\dmge-c\source\cart.c
 	<stdint.h>
 	<stdio.h>
 	<stdlib.h>
 	<mmu.h>
 
-1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\mmu.h
+1473125260 c:\users\jesse\documents\mosaic software\dmge-c\include\mmu.h
 	<stdint.h>
 	<stdbool.h>
 
-1472996838 source:e:\users\jesse\documents\mosaic software\dmge-c\source\dmge.c
+1476159003 source:c:\users\jesse\documents\mosaic software\dmge-c\source\dmgcpu.c
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+	<dmgcpu.h>
+	<gameboy.h>
+
+1474177142 c:\users\jesse\documents\mosaic software\dmge-c\include\dmgcpu.h
+	<stdint.h>
+	<stdbool.h>
+
+1474196038 c:\users\jesse\documents\mosaic software\dmge-c\include\gameboy.h
+	<dmgcpu.h>
+	<mmu.h>
+	<gpu.h>
+	<apu.h>
+
+1474258730 c:\users\jesse\documents\mosaic software\dmge-c\include\gpu.h
+
+1473526742 c:\users\jesse\documents\mosaic software\dmge-c\include\apu.h
+	<stdint.h>
+
+1475470886 source:c:\users\jesse\documents\mosaic software\dmge-c\source\dmge.c
 	<stdlib.h>
 	<gameboy.h>
 	<dmgcpu.h>
 	<mmu.h>
 	<cart.h>
 	<gpu.h>
+	<apu.h>
+	<sdl_win.h>
+	<windows.h>
 
-1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\gameboy.h
-	<dmgcpu.h>
+1473299189 c:\users\jesse\documents\mosaic software\dmge-c\include\cart.h
+
+1476158847 source:c:\users\jesse\documents\mosaic software\dmge-c\source\gpu.c
+	<stdio.h>
+	<string.h>
+	<gameboy.h>
 	<mmu.h>
 	<gpu.h>
+	<sdl_win.h>
 
-1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\dmgcpu.h
+1474546043 source:c:\users\jesse\documents\mosaic software\dmge-c\source\mmu.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<mmu.h>
+	<gameboy.h>
+	<cart.h>
+
+1476158868 source:c:\users\jesse\documents\mosaic software\dmge-c\source\apu.c
+	<apu.h>
+	<gameboy.h>
+	<stdio.h>
+
+1474444605 source:c:\users\jesse\documents\mosaic software\dmge-c\source\sdl_win.c
+	<SDL2/SDL.h>
+	<SDL2/SDL_opengl.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdio.h>
+	<sdl_win.h>
+	<gameboy.h>
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_haptic.h"
+	"SDL_hints.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
 	<stdint.h>
-	<stdbool.h>
+	<ctype.h>
+	<math.h>
+	<float.h>
+	<iconv.h>
+	<sal.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
 
-1472998108 e:\users\jesse\documents\mosaic software\dmge-c\include\gpu.h
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_config.h
+	"SDL_platform.h"
 
-1472996838 e:\users\jesse\documents\mosaic software\dmge-c\include\cart.h
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_platform.h
+	"AvailabilityMacros.h"
+	"TargetConditionals.h"
+	<winapifamily.h>
+	"begin_code.h"
+	"close_code.h"
 
-1472998868 source:e:\users\jesse\documents\mosaic software\dmge-c\source\mmu.c
-	<stdio.h>
-	<string.h>
-	<mmu.h>
-	<gameboy.h>
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\begin_code.h
 
-1472999361 source:e:\users\jesse\documents\mosaic software\dmge-c\source\dmgcpu.c
-	<stdio.h>
-	<string.h>
-	<stdbool.h>
-	<dmgcpu.h>
-	<gameboy.h>
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\close_code.h
 
-1472999551 source:e:\users\jesse\documents\mosaic software\dmge-c\source\gpu.c
-	<stdio.h>
-	<string.h>
-	<gameboy.h>
-	<mmu.h>
-	<gpu.h>
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_assert.h
+	"SDL_config.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<mbarrier.h>
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_atomic.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<altivec.h>
+	<mmintrin.h>
+	<mm3dnow.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_pixels.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_scancode.h
+	"SDL_stdinc.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_system.h
+	"SDL_stdinc.h"
+	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1474254918 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl_win.h
+	<stdint.h>
+	<windows.h>
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_opengl.h
+	"SDL_config.h"
+	"gl_mangle.h"
+	<windows.h>
+	"SDL_opengl_glext.h"
+
+1451768293 c:\users\jesse\documents\mosaic software\dmge-c\include\sdl2\sdl_opengl_glext.h
+	<windows.h>
+	<stddef.h>
+	<inttypes.h>
+	<inttypes.h>
+	<inttypes.h>
+	<stdint.h>
+	<stdint.h>
+	<inttypes.h>
 

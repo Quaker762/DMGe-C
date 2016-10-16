@@ -29,6 +29,8 @@ Revision History:
 #define HC_FLAG     0x20
 #define CARRY_FLAG  0x10
 
+#define GB_CLOCK    4.194304*(1000 * 1000)
+
 // Register data type.
 // Able to access both bytes individually, as well as the entire word
 typedef union
@@ -71,6 +73,8 @@ typedef struct
 
 void cpu_init(void* gb);
 void cpu_cycle();
+
+uint16_t get_pc();
 
 
 #endif // DMGCPU_H_INCLUDED

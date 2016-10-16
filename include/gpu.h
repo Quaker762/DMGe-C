@@ -71,5 +71,5 @@ typedef struct
 
 void gpu_init(void* gb);
 void gpu_cycle(uint32_t clock);
-
+void update_tile(uint16_t addr, uint16_t data);
 #endif // GPU_H_INCLUDED

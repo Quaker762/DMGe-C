@@ -79,18 +79,19 @@ static void inc(uint8_t* value)
 
 static void dec(uint8_t* value)
 {
+    set_flag(SUB_FLAG);
+
     if((*value & 0x0F) == 0x0F)
         set_flag(HC_FLAG);
     else
         unset_flag(HC_FLAG);
 
     (*value)--; // Perform increment
-    set_flag(SUB_FLAG);
 
-    if(*value != 0)
-        unset_flag(ZERO_FLAG);
-    else
+    if((*value) == 0)
         set_flag(ZERO_FLAG);
+    else
+        unset_flag(ZERO_FLAG);
 }
 
 static void add(uint8_t* reg, uint8_t value)
@@ -4936,6 +4937,14 @@ void cpu_init(void* gb)
     printf("CPU Initialised Successfully!\n");
 }
 
+// We are treading on some SERIOUS C++ shit here...
+// Next thing you know this will be in a goddamn fucking struct pointer
+// and I end up cracking out g++ and use classes...
+uint16_t get_pc()
+{
+    return PC.word;
+}
+
 uint8_t instruction = 0x00;
 
 // Main Processor loop
@@ -4943,24 +4952,31 @@ void cpu_cycle()
 {
     instruction = gameboy->mmu.read8(PC.word);
 
+    if(PC.word == 0x100)
+        gameboy->mmu.map_rom();
+
     switch(instruction)
     {
         case 0xCB:
             instruction = gameboy->mmu.read8(PC.word + 1);
 
-            fprintf(trace, "%-20s", instructionscb[instruction].name);
-            fprintf(trace, "instruction:0x%02x ", instruction);
-            fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x PC:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, PC.word, SP.word);
-
+            #ifdef DEBUG_ENABLE
+                fprintf(trace, "[0x%04x]%-20s", PC.word, instructionscb[instruction].name);
+                fprintf(trace, "instruction:0x%02x ", instruction);
+                fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, SP.word);
+            #endif
             ((void (*)(void))instructionscb[instruction].operation)();
 
             gameboy->cpu.clock.t += instructionscb[instruction].t_cycles;
             gameboy->cpu.clock.m += instructionscb[instruction].m_cycles;
             break;
         default:
-            fprintf(trace, "%-20s", instructions[instruction].name);
-            fprintf(trace, "instruction:0x%02x ", instruction);
-            fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x PC:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, PC.word, SP.word);
+
+            #ifdef DEBUG_ENABLE
+                fprintf(trace, "[0x%04x]%-20s", PC.word, instructions[instruction].name);
+                fprintf(trace, "instruction:0x%02x ", instruction);
+                fprintf(trace, "AF:0x%04x BC:0x%04x DE:0x%04x HL:0x%04x SP:0x%04x\n", AF.word, BC.word, DE.word, HL.word, SP.word);
+            #endif // DEBUG_ENABLE
 
             ((void (*)(void))instructions[instruction].operation)();
 

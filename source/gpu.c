@@ -23,10 +23,18 @@ Revision History:
 #include <gameboy.h>
 #include <mmu.h>
 #include <gpu.h>
+#include <sdl_win.h>
 
-#define VRAM_OFFSET 0x8000
+#define VRAM_BASE 0x8000
+#define VRAM_SIZE 0x2000
+
 
 gameboy_t* gameboy;
+
+pixel_t paletteref[4];
+
+uint8_t vram[VRAM_SIZE];
+uint8_t tileset[384][8][8];
 
 uint8_t vram_read(uint16_t address)
 {
@@ -35,7 +43,7 @@ uint8_t vram_read(uint16_t address)
         printf("gpu: Error reading address %x (out of bounds)");
         return 0x0000; // This will fuck some shit up tbh fam
     }
-    return gameboy->mmu.read8(address);
+    return vram[address];
 }
 
 void vram_write(uint16_t address, uint8_t val)
@@ -45,9 +53,42 @@ void vram_write(uint16_t address, uint8_t val)
         printf("gpu: Error writing address %x (out of bounds)");
         return;
     }
-    gameboy->mmu.write8(address, val);
+    vram[address] = val;
 }
 
+// This needs to be fuckin fixed ASAP!
+void update_tile(uint16_t addr, uint16_t data)
+{
+    uint16_t addrtrans = addr & 0x1FFE;
+    uint16_t tileindex = (addrtrans >> 4);
+    uint8_t y = (addrtrans >> 1) & 7;
+
+    uint8_t sx, x;
+
+    for(x = 0; x < 8; x++)
+    {
+        sx = 1 << (7-x);
+
+        tileset[tileindex][y][x] = ((gameboy->mmu.read8(addrtrans) & sx) ? 1 : 0)
+        + ((gameboy->mmu.read8(addrtrans + 1) & sx) ? 2 : 0);
+    }
+}
+
+void render_scanline()
+{
+    //TILEMAP 0 STARTS AT 0x8000!
+    uint16_t tilemapbase = VRAM_BASE;
+    uint16_t offsetbase = tilemapbase + ((((gameboy->gpu.line+gameboy->gpu.scy) & 255) >> 3) << 5);
+    uint16_t x, y, tindex;
+
+    y = (gameboy->gpu.line + gameboy->gpu.scy) & 0x07;
+
+    for(x = 0; x < 160; x++)
+    {
+        tindex = gameboy->mmu.read8(offsetbase + (x/8));
+        put_pixel(x, gameboy->gpu.line, paletteref[gameboy->gpu.palette[tileset[tindex][y][x % 8]]]);
+    }
+}
 
 void gpu_cycle(uint32_t clock)
 {
@@ -69,7 +110,7 @@ void gpu_cycle(uint32_t clock)
                 {
                     gameboy->gpu.state = STATE_OAM_READ;
                 }
-                gameboy->gpu.stateclock -= 204;
+                gameboy->gpu.stateclock = 0;
             }
         break;
 
@@ -83,7 +124,7 @@ void gpu_cycle(uint32_t clock)
                     gameboy->gpu.line = 0;
                     gameboy->gpu.state = STATE_OAM_READ;
                 }
-                gameboy->gpu.stateclock -= 456;
+                gameboy->gpu.stateclock = 0;
             }
         break;
 
@@ -91,7 +132,7 @@ void gpu_cycle(uint32_t clock)
             if(gameboy->gpu.stateclock >= 80)
             {
                 gameboy->gpu.state = STATE_VRAM_READ;
-                gameboy->gpu.stateclock -= 80;
+                gameboy->gpu.stateclock = 0;
             }
         break;
 
@@ -99,7 +140,9 @@ void gpu_cycle(uint32_t clock)
             if(gameboy->gpu.stateclock >= 172)
             {
                 gameboy->gpu.state = STATE_HBLANK;
-                gameboy->gpu.stateclock -= 172;
+
+                render_scanline();
+                gameboy->gpu.stateclock = 0;
             }
         break;
 
@@ -112,7 +155,7 @@ void gpu_cycle(uint32_t clock)
 
 static void write_reg(uint16_t address, uint8_t data)
 {
-    printf("gpu: attempting write to register 0x%04x with data 0x%02x...\n", address, data);
+    //printf("gpu: attempting write to register 0x%04x with data 0x%02x...\n", address, data);
 
     switch(address)
     {
@@ -153,15 +196,11 @@ static uint8_t read_reg(uint16_t address)
     return 0x00;
 }
 
-void render_scanline()
-{
-
-}
-
 void gpu_init(void* gb)
 {
     gameboy = (gameboy_t*)gb;
-    //gameboy->gpu.vram_read = &vram_read;
+    gameboy->gpu.vram_write         = &vram_write;
+    gameboy->gpu.vram_read          = &vram_read;
 
     gameboy->gpu.render_scanline    = &render_scanline;
     gameboy->gpu.write_reg          = &write_reg;
@@ -171,6 +210,13 @@ void gpu_init(void* gb)
     gameboy->gpu.scx = 0;
     gameboy->gpu.scy = 0;
     gameboy->gpu.stateclock = 0;
+
+    memset(&tileset, 0x00, 384*8*8);
+
+    paletteref[0] = (pixel_t){156, 189, 15};
+    paletteref[1] = (pixel_t){140, 173, 15};
+    paletteref[2] = (pixel_t){48, 98, 48};
+    paletteref[3] = (pixel_t){15, 56, 15};
 
     printf("GPU Initialised Successfully!\n");
 }

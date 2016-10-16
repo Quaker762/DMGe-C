@@ -35,5 +35,6 @@ typedef struct
     mmu_t mmu;
 } gameboy_t;
 
+void dmge_quit(void);
 
 #endif // GAMEBOY_H_INCLUDED
